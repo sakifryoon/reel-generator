@@ -18,6 +18,13 @@ PROFILE_PATH = os.path.join(TRANSCRIPT_DIR, "reference_profile.json")
 
 load_dotenv(os.path.join(APP_DIR, ".env"))
 
+# APIキー取得（Streamlit Cloud Secrets → .env → サイドバー入力の順で探す）
+def _get_default_api_key():
+    try:
+        return st.secrets["GOOGLE_API_KEY"]
+    except Exception:
+        return os.getenv("GOOGLE_API_KEY", "")
+
 st.set_page_config(page_title="リール企画ジェネレーター", page_icon="🎬", layout="wide")
 st.title("リール企画ジェネレーター")
 
@@ -26,7 +33,7 @@ with st.sidebar:
     st.header("API設定")
     google_key = st.text_input(
         "Google AI APIキー",
-        value=os.getenv("GOOGLE_API_KEY", ""),
+        value=_get_default_api_key(),
         type="password",
         help="Gemini（文字起こし・分析・提案）に使用"
     )
